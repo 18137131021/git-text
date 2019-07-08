@@ -55,3 +55,4 @@ try:
             locals()[miniweixin_setting] = getattr(miniweixin_module, miniweixin_setting)
 except:
     pass
+
