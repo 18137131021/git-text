@@ -192,6 +192,18 @@
                                    placeholder="名称">
                         </div>
                     </div>
+                    <div class="form-group clearfix ">
+                        <label class="col-sm-3 control-label bk-lh30 pt0">选择时间：</label>
+                        <div class="col-sm-2">
+                            开始--- <input type="text" class="form-control daterangepicker_demo"
+                                         id="daterangepicker_demo1" placeholder="选择日期...">
+
+                        </div>
+                        <div class="col-sm-2">
+                            结束--- <input type="text" class="form-control daterangepicker_demo"
+                                         id="daterangepicker_demo2" placeholder="选择日期...">
+                        </div>
+                    </div>
                     <div class="form-group clearfix">
                         <div class="col-sm-9 col-sm-offset-3">
                             <input id="search_job_task" type="button" value="查询"
@@ -338,13 +350,39 @@
                 }
             });
         });
+
+        // 查询主机加载到模态框
+        $('#select_business4').change(function () {
+            var calve_data4 = $('#select_business1').val();
+            var calve_data5 = $('#select_business4').val();
+            var url_data = '${SITE_URL}' + 'search_pc/';
+            $.ajax({
+                url: url_data,
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    biz_id: calve_data4,
+                    set_id: calve_data5
+                },
+                success: function (data) {
+                    console.log('获取');
+                    $("#data_list").empty();
+                    for (var i = 0; i < data.data.list.length; i++) {
+                        $('.data_list').append('<p><input type="checkbox" name="jiaoben_role" class="check_role" value="' + data.data.list[i].ip + '|' + data.data.list[i].area_id + '"><label for="">' + data.data.list[i].area + '|' + data.data.list[i].ip + '|' + data.data.list[i].os_name + '</label></p>')
+                    }
+
+
+                }
+            });
+        });
+
         // 主机选择的模态框中全选的操作
         $("#btn4").click(function () {
             var xz = $(this).prop("checked");
             var ck = $(".check_role").prop("checked", xz);
         });
 
-        // 通过点击查询
+        // 通过点击查询按钮获取条件查询并返回数据（一个load页面）
         $('#search_job_task').click(function () {
             var data1 = $('#select_business2').val();
             var data2 = $('#module_type').val();

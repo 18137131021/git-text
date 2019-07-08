@@ -10,8 +10,23 @@ import datetime
 from celery import task
 from celery.schedules import crontab
 from celery.task import periodic_task
-
+from unins import job_exec
 from common.log import logger
+
+
+# 异步函数
+@task
+def async_run_script(handle_user, t_script_data, contents_name, biz_id, ip_list, script_type, module_name, script_content):
+    '''
+    异步执行脚本函数
+    :param bk_biz_id:业务id
+    :param ip_cloud_string: ip和云区域字符串（192.168.51.31|1,）
+    :param script_content:  脚本内容数据是base64
+    :param script_params:  脚本参数 数据是base64
+    :return: 接口调用状态
+    '''
+    result = job_exec.job_exec(handle_user, t_script_data, contents_name, biz_id, ip_list, script_content=script_content, script_type=script_type, module_name=module_name)
+    return result
 
 
 @task()
@@ -40,7 +55,7 @@ def execute_task():
     async_task.apply_async(args=[now.hour, now.minute], eta=now + datetime.timedelta(seconds=60))
 
 
-@periodic_task(run_every=crontab(minute='*/5', hour='*', day_of_week="*"))
+@periodic_task(run_every=5)
 def get_time():
     """
     celery 周期任务示例
@@ -50,4 +65,7 @@ def get_time():
     """
     execute_task()
     now = datetime.datetime.now()
+    # script_job = models.T_RECORDS_TASK.objects.all(is_delete=0)
+    # if script_job.count() > 0:
+    job_exec.time_script()
     logger.error(u"celery 周期任务调用成功，当前时间：{}".format(now))
