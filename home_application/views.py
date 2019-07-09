@@ -300,4 +300,5 @@ def add_module(request):
         response = FileResponse(file_data)
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment;filename="history_info.xls"'
+        # return response
     return redirect(reverse(home))
